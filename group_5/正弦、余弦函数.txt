@@ -1,0 +1,150 @@
+#include<iostream>
+using namespace std;
+#define N 8
+#define PI 3.14
+class func
+{
+public:
+	double m_x;
+	func(double t_x)
+	{
+		m_x=t_x;
+	}
+	double choice_sintime(double m_x); //对正弦输入值进行分段
+	double choice_costime(double m_x); //对余弦输入值进行分段
+    void sin();  //正弦函数
+	void cos();  //余弦函数
+};
+double func::choice_sintime(double m_x)
+{
+	double k_x=fmod(m_x,2*PI);
+	if(k_x>=0&&k_x<=PI)   //0-PI时，直接输出
+		return k_x;
+	else
+		return -(k_x-PI);   //PI-2PI时，相当于0-PI值取反
+}
+double func::choice_costime(double m_x)
+{
+	double k_x=fmod(m_x,2*PI);
+	if(k_x>=0&&k_x<=PI)
+		return k_x;
+	else
+		return 2*PI-k_x;   //PI-2PI时，横坐标关于PI对称
+}
+void func::sin()
+{
+	double x=choice_sintime(m_x);
+	double sum=0;
+    int n_n=0;
+	for(int n=0;n<N;n++)
+	{
+		int m=1;
+		double x_x=x;
+		for(int j=1;j<=2*n+1;j++)
+			m*=j;    //2n+1的阶乘
+		n_n=pow(-1,n);   //正负号
+		x_x=pow(x_x,2*n+1);   //x的2n+1次方
+		sum+=(x_x/m)*n_n;
+	}
+	cout<<"sin("<<m_x<<")="<<sum<<endl;
+}
+void func::cos()
+{
+	double x=choice_sintime(m_x);
+	double sum=0;
+    int n_n=0;
+	for(int n=1;n<N;n++)   //从x的平方开始算系数
+	{
+		int m=1;
+		double x_x=x;
+		for(int j=1;j<=2*n;j++)
+			m*=j;  //2n的阶乘
+		n_n=pow(-1,n);    //正负号
+		x_x=pow(x_x,2*n);   //x的2n次方
+		sum+=(x_x/m)*n_n;
+	}
+	cout<<"cos("<<m_x<<")="<<1+sum<<endl;
+}
+void test01()
+{
+	double choice;
+	cout<<"选择1-弧度值或2-角度值:"<<endl;
+	cin>>choice;
+	if(choice==1)
+	{
+		double t_x;
+		cout<<"输入弧度值：";
+		cin>>t_x;
+		func* ptr=new func(t_x);   //创建堆区指针
+     	ptr->sin();
+		delete ptr;
+	}
+	else if(choice==2)
+	{
+		double t;
+		cout<<"输入角度值：";
+		cin>>t;
+		t=t/180.0*PI;  //角度值转换为弧度值
+		func* ptr=new func(t);
+	    ptr->sin();
+		delete ptr;
+	}
+	else
+		cout<<"输入有误！"<<endl;	
+	system("pause");
+	system("cls");
+}
+void test02()
+{
+	double choice;
+	cout<<"选择1-弧度值或2-角度值:"<<endl;
+	cin>>choice;
+	if(choice==1)
+	{
+		double t_x;
+		cout<<"输入弧度值：";
+		cin>>t_x;
+		func* ptr=new func(t_x);
+		ptr->cos();
+		delete ptr;
+	}
+	else if(choice==2)
+	{
+		double t;
+		cout<<"输入角度值：";
+		cin>>t;
+		t=t/180.0*PI;
+		func* ptr=new func(t);
+	    ptr->cos();
+		delete ptr;
+	}
+	else
+		cout<<"输入有误！"<<endl;
+	system("pause");
+	system("cls");
+}
+int main()
+{
+	int select;
+	while(true)
+	{
+		cout<<"选择要实现的函数  1-正弦函数  2-余弦函数  0-退出功能"<<endl;
+		cin>>select;
+		switch(select)
+		{
+		case 1:
+			test01();
+			break;
+		case 2:
+			test02();
+			break;
+		case 0:
+			return 0;
+			break;
+		default:
+			break;
+		}
+	}
+	system("pause");
+	return 0;
+}

@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "软件工程—三角函数", "软件工程—三角函数\软件工程—三角函数.vcxproj", "{5973202B-1301-4378-B6C8-02CFD4F9E628}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5973202B-1301-4378-B6C8-02CFD4F9E628}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5973202B-1301-4378-B6C8-02CFD4F9E628}.Debug|Win32.Build.0 = Debug|Win32
+		{5973202B-1301-4378-B6C8-02CFD4F9E628}.Release|Win32.ActiveCfg = Release|Win32
+		{5973202B-1301-4378-B6C8-02CFD4F9E628}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
