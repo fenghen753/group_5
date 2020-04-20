@@ -1,9 +1,11 @@
 #pragma once
 
-#include "math.h"
-#include "stdlib.h"
+#include <math.h>
+#include <stdlib.h>
 #include <iostream>
 #include <time.h>
+#include <Windows.h>
+#include <tchar.h>
 
 double f_tan(double x);   //Çótan
 int tan_test(void);		//tanº¯Êı²âÊÔ	
