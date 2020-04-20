@@ -8,11 +8,6 @@
 double f_tan(double x);   //Çótan
 int tan_test(void);		//tanº¯Êı²âÊÔ	
 
-double absolute(double x);
-double Factorial(int x);
-double nth(double x, int n);
-double Bernoulli(int x);
-double tanx(double x);
 
 
 

@@ -20,6 +20,9 @@
 	2020.4.16
 		测试发现精度不够，对f_tan函数进行修改，依然使用麦克劳林展开实现，尝试增加了阶数。1000次测试中平均有350次误差大于0.001。
 
+	2020.4.20
+		发现算法上tan函数的展开的误差在输入角度接近90时很大，而cot的展开式误差很小。因此将cot的展开式进行简单变换后用来近似tan函数，效果不错。
+
 */
 #include "tan_function.h"
 
@@ -27,76 +30,6 @@
 
 //定义误差值
 #define accuracy 0.001
-
-//求绝对值
-double absolute(double x)
-{
-	if (x < 0)x = -x;
-	return x;
-}
-
-//求阶乘
-double Factorial(int x)
-{
-	if (x == 1 || x == 0)return 1;
-	else
-		return 1.0 * x * Factorial(x - 1);
-}
-
-//求n次方
-double nth(double x, int n)
-{
-	if (n > 0)
-	{
-		return x * nth(x, n - 1);
-	}
-	if (n == 0)
-	{
-		return 1;
-	}
-	if (n < 0)
-	{
-		return (1 / x) * nth(x, n + 1);
-	}
-}
-
-
-//求伯努利数
-double Bernoulli(int x)
-{
-	int k = x;
-	double B = 0;
-	if (x == 0)
-		return 1;
-	else
-		if (x > 1 && x % 2 == 1)
-		{
-			return 0;
-		}
-		else
-		{
-			while (k)
-			{
-				k--;
-				B += -1.0 * (Factorial(x) * Bernoulli(k)) / (Factorial(x - k) * Factorial(k) * (x - k + 1));
-			}
-			return B;
-		}
-}
-
-double tanx(double x)//tan(x)  精度保持0.000001 计算速度太慢
-{
-	int i = 1;
-	double e = 1, sum = 0;
-	while ( i <= 10)//考虑计算速度，控制Bernoulli()
-	{
-		e = 1.0 * (nth(-1, i - 1) * nth(2, 2 * i) * (nth(2, 2 * i) - 1.0) * Bernoulli(2 * i) * nth(x, 2 * i - 1)) / (Factorial(2 * i));
-		sum += e;
-		i++;
-	}
-	return sum;
-}
-
 
 
 /*tan函数*/
@@ -129,7 +62,7 @@ double f_tan(double input)
 	while (input < -90) input += 180;
 	while (input > 90)  input -= 180;
 
-	if(absolute(input) == 90)
+	if(abs(input) == 90)
 		return INFINITY;
 
 	//常用特殊值
@@ -139,8 +72,16 @@ double f_tan(double input)
 		return -1;
 
 	y = input / 180 * pi;	//将角度输入转化为弧度输入
-//	o = y + (double(1.0 / 3.0)) * pow(y, 3) + double(2.0 / 15.0) * pow(y, 5) + double(17.0 / 315.0) * pow(y, 7) + double(62.0 / 2835.0) * pow(y, 9);
-	o = tanx(y);
+	if (input > 0)
+		o = 1.0 / (pi / 2.0 - y) - (pi / 2.0 - y) / 3.0 - pow((pi / 2 - y), 3) / 45 - 2 * pow((pi / 2 - y), 5) / 945 - pow((pi / 2 - y), 7) / 4725 - 2.1377806 * pow(10, -5) * pow((pi / 2 - y), 9) - 2.16440629 * pow(10, -6) * pow((pi / 2 - y), 11);	else
+	{
+		y = abs(y);
+		o = 1.0 / (pi / 2.0 - y) - (pi / 2.0 - y) / 3.0 - pow((pi / 2 - y), 3) / 45 - 2 * pow((pi / 2 - y), 5) / 945 - pow((pi / 2 - y), 7) / 4725 - 2.1377806 * pow(10, -5) * pow((pi / 2 - y), 9) - 2.16440629 * pow(10, -6) * pow((pi / 2 - y), 11);
+		o = -o;
+	}
+
+	//	o = y + 1.0 / 3.0 * pow(y, 3) + 2.0 / 15.0 * pow(y, 5) + 17.0 / 315.0 * pow(y, 7) + 62.0 / 2835.0 * pow(y, 9) + 1382.0 / 155925.0 * pow(y, 11);
+	//	o = 1.0 / (pi/2.0 - y) - (pi/2.0 - y) / 3.0 - pow((pi/2 - y), 3) / 45 - 2 * pow((pi/2 - y),5) / 945 - pow((pi / 2 - y),7) / 4725 - 2.1377806 * pow(10 ,-5) * pow((pi / 2 - y),9) - 2.16440629 * pow(10,-6) * pow((pi / 2 - y),11);
 	//保留小数点后三位
 	o = int(o * 1000) / 1000.0;
 
@@ -154,21 +95,25 @@ double f_tan(double input)
 int tan_test(void)
 {
 	//TUDO 随机生成1000个数测试；返回值：int型，返回1000组测试中误差大于0.001的次数。
-	double n;
+	int n;
 	double x, y;
+	int a = 0, b = 90;
+	double diff;
 	int cnt = 0;
 	srand((unsigned)time(NULL));
 	for (int i = 0; i < 1000; i++)
 	{
-		n = (rand() % 180) - 90.0;
+		n = (rand() % (b - a + 1)) + a;
 		
-		if (absolute(n) != 90)
+		if (abs(n) != 90)
 		{
 			x = tan(n/180.0 * pi);
 			y = f_tan(n);
-			if (absolute(x - y) >= accuracy)
+			diff = abs(x - y);
+			if (diff >= accuracy)
 				cnt++;
 		}
 	}
+
 	return cnt;
 }
