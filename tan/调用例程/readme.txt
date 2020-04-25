@@ -1,0 +1,5 @@
+tancpp.dll为tan函数实现
+
+tantest.dll为tan函数的测试程序，对其输入一千次随机数返回误差大于0.001的次数，经过测试误差保持为0
+
+TrigonometryTest.cpp是调用例程其中对tantest.dll的测试程序进行了调用，测试程序中对tancpp.dll进行了调用。
